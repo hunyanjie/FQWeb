@@ -160,7 +160,7 @@ class MainHook : IXposedHookLoadPackage {
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
-        et_port.hint = "请输入1000-65535之间的值"
+        et_port.hint = "请输入1024-65535之间的值"
         et_port.setText(SPUtils.getInt("port", 9999).toString())
         et_port.setTextColor(textColor)
         et_port.textSize = 16F
@@ -236,8 +236,8 @@ class MainHook : IXposedHookLoadPackage {
             .setPositiveButton("保存设置") { dialog, _ ->
                 SPUtils.putBoolean("autoStart", s_auto_start.isChecked)
                 val port = et_port.text.toString().toInt()
-                if (port !in 1000..65535) {
-                    Toast.makeText(context, "端口只能在1000-65535之间", Toast.LENGTH_SHORT)
+                if (port !in 1024..65535) {
+                    Toast.makeText(context, "端口只能在1024-65535之间", Toast.LENGTH_SHORT)
                         .show()
                 } else {
                     SPUtils.putInt("port", port)
