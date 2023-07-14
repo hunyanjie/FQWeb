@@ -1,11 +1,14 @@
 package me.fycz.fqweb
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Application
 import android.content.Context
 import android.graphics.Color
+import android.text.Html
 import android.text.InputFilter
 import android.text.InputType
+import android.text.method.LinkMovementMethod
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
@@ -113,6 +116,7 @@ class MainHook : IXposedHookLoadPackage {
             }
     }
 
+    @SuppressLint("SetTextI18n")
     fun dialog(context: Context, adapter: Any?, settingView: Any) {
         val textColor = Color.parseColor("#060606")
 
@@ -227,6 +231,35 @@ class MainHook : IXposedHookLoadPackage {
         )
         linearlayout_7.addView(s_enable, layoutParams_9)
         linearlayout_0.addView(linearlayout_7, layoutParams_7)
+
+        val linearlayout_8 = LinearLayout(context)
+        val layoutParams_10 = LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        linearlayout_8.setPadding(
+            dp2px(context, 10F),
+            dp2px(context, 10F),
+            dp2px(context, 10F),
+            dp2px(context, 10F)
+        )
+        linearlayout_8.orientation = LinearLayout.HORIZONTAL
+        val textview_9 = TextView(context)
+        val layoutParams_11 = LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        textview_9.text = Html.fromHtml(
+            """
+            <a href="https://github.com/fengyuecanzhu/FQWeb">源码地址</a>  <a href="https://github.com/fengyuecanzhu/FQWeb#免责声明">免责声明</a>  <a href="https://t.me/FQ_Web">TG频道</a>
+        """.trimIndent()
+        )
+        textview_9.movementMethod = LinkMovementMethod.getInstance()
+        textview_9.textSize = 16F
+        linearlayout_8.addView(textview_8, layoutParams_11)
+        linearlayout_0.addView(linearlayout_8, layoutParams_10)
+
+
         layout_root.addView(linearlayout_0, layoutParams_0)
 
         AlertDialog.Builder(context)
