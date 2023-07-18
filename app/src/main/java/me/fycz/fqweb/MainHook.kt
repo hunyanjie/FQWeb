@@ -251,12 +251,12 @@ class MainHook : IXposedHookLoadPackage {
         )
         textview_9.text = Html.fromHtml(
             """
-            <a href="https://github.com/fengyuecanzhu/FQWeb">源码地址</a>  <a href="https://github.com/fengyuecanzhu/FQWeb#免责声明">免责声明</a>  <a href="https://t.me/FQ_Web">TG频道</a>
+            <a href="https://github.com/fengyuecanzhu/FQWeb">Github</a>&nbsp;&nbsp;&nbsp;<a href="https://github.com/fengyuecanzhu/FQWeb#免责声明">免责声明</a>&nbsp;&nbsp;&nbsp;<a href="http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=2cgswx48xaTgYmQjSLfH0XNom5n4vm1z&authKey=npnemJO7L6NyLdKvjePLU%2Ffav5v75Q8alXVzCK%2FypGJtFqp1DV35fyukWhhmvTQU&noverify=0&group_code=887847462">QQ群(887847462)</a>
         """.trimIndent()
         )
         textview_9.movementMethod = LinkMovementMethod.getInstance()
         textview_9.textSize = 16F
-        linearlayout_8.addView(textview_8, layoutParams_11)
+        linearlayout_8.addView(textview_9, layoutParams_11)
         linearlayout_0.addView(linearlayout_8, layoutParams_10)
 
 
