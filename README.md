@@ -6,6 +6,8 @@
 
 番茄小说Web服务
 
+交流群：[887847462](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=2cgswx48xaTgYmQjSLfH0XNom5n4vm1z&authKey=npnemJO7L6NyLdKvjePLU%2Ffav5v75Q8alXVzCK%2FypGJtFqp1DV35fyukWhhmvTQU&noverify=0&group_code=887847462)
+
 ## 使用
 Web服务可在番茄小说设置界面开启，默认运行在9999端口
 
@@ -14,6 +16,8 @@ Web服务可在番茄小说设置界面开启，默认运行在9999端口
 免root lspatch集成版：[番茄小说](https://www.123pan.com/s/ib9LVv-odiwd.html)
 
 如需适配其他版本，请发[Issue](https://github.com/fengyuecanzhu/FQWeb/issues/new)并附上对应apk
+
+如需定制其他APP，请加[QQ群](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=2cgswx48xaTgYmQjSLfH0XNom5n4vm1z&authKey=npnemJO7L6NyLdKvjePLU%2Ffav5v75Q8alXVzCK%2FypGJtFqp1DV35fyukWhhmvTQU&noverify=0&group_code=887847462)私聊群主
 
 ## API列表
 ### 搜索
