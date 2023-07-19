@@ -61,7 +61,7 @@ class MainHook : IXposedHookLoadPackage {
                     httpServer = HttpServer(SPUtils.getInt("port", 9999))
                     hookSetting(lpparam.classLoader)
                     hookUpdate(lpparam.classLoader)
-                    if (!httpServer.isAlive && SPUtils.getBoolean("autoStart", false)) {
+                    if (!httpServer.isAlive && SPUtils.getBoolean("autoStart", true)) {
                         try {
                             httpServer.start()
                         } catch (e: Throwable) {
