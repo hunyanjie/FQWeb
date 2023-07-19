@@ -1,6 +1,7 @@
 package me.fycz.fqweb
 
 import android.annotation.SuppressLint
+import android.app.ActivityManager
 import android.app.AlertDialog
 import android.app.Application
 import android.content.Context
@@ -53,20 +54,35 @@ class MainHook : IXposedHookLoadPackage {
                 "onCreate"
             ) {
                 val app = it.thisObject as Application
-                GlobalApp.application = app
-                log("versionCode = ${Config.versionCode}")
-                SPUtils.init(app)
-                httpServer = HttpServer(SPUtils.getInt("port", 9999))
-                hookSetting(lpparam.classLoader)
-                hookUpdate(lpparam.classLoader)
-                if (!httpServer.isAlive && SPUtils.getBoolean("autoStart", false)) {
-                    try {
-                        httpServer.start()
-                    } catch (e: Throwable) {
-                        log(e)
+                if (lpparam.packageName == getProcessName(app)) {
+                    GlobalApp.application = app
+                    log("versionCode = ${Config.versionCode}")
+                    SPUtils.init(app)
+                    httpServer = HttpServer(SPUtils.getInt("port", 9999))
+                    hookSetting(lpparam.classLoader)
+                    hookUpdate(lpparam.classLoader)
+                    if (!httpServer.isAlive && SPUtils.getBoolean("autoStart", false)) {
+                        try {
+                            httpServer.start()
+                        } catch (e: Throwable) {
+                            log(e)
+                        }
                     }
                 }
             }
+        }
+    }
+
+    private fun getProcessName(context: Context): String {
+        return try {
+            for (runningAppProcessInfo in (context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager).runningAppProcesses) {
+                if (runningAppProcessInfo.pid == android.os.Process.myPid()) {
+                    return runningAppProcessInfo.processName
+                }
+            }
+            "unknown"
+        } catch (unused: Exception) {
+            "unknown"
         }
     }
 
