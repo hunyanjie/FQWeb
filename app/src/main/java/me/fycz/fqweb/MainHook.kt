@@ -209,7 +209,7 @@ class MainHook : IXposedHookLoadPackage {
         textview_5.textSize = 16F
         linearlayout_4.addView(textview_5, layoutParams_5)
         val s_auto_start = Switch(context).apply {
-            isChecked = SPUtils.getBoolean("autoStart", false)
+            isChecked = SPUtils.getBoolean("autoStart", true)
         }
         val layoutParams_6 = LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
