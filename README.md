@@ -52,7 +52,7 @@ params：和番茄保持一致
 ```
 
 ## 下载
-从[RELEASE](https://github.com/fengyuecanzhu/FQWeb/releases/latest)下载
+从[RELEASE](https://github.com/fengyuecanzhu/FQWeb/releases/latest)或[ACTION](https://github.com/fengyuecanzhu/FQWeb/actions/workflows/build.yml)下载
 
 ## 常见问题
 
