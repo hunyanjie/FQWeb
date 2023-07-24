@@ -5,6 +5,8 @@ import android.app.ActivityManager
 import android.app.AlertDialog
 import android.app.Application
 import android.content.Context
+import android.content.res.Resources
+import android.content.res.XModuleResources
 import android.graphics.Color
 import android.text.Html
 import android.text.InputFilter
@@ -17,7 +19,10 @@ import android.widget.LinearLayout
 import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
+import de.robv.android.xposed.IXposedHookInitPackageResources
 import de.robv.android.xposed.IXposedHookLoadPackage
+import de.robv.android.xposed.IXposedHookZygoteInit
+import de.robv.android.xposed.callbacks.XC_InitPackageResources
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import me.fycz.fqweb.constant.Config
 import me.fycz.fqweb.utils.GlobalApp
@@ -40,10 +45,21 @@ import java.util.LinkedList
  * @author fengyue
  * @date 2022/5/3 12:59
  */
-class MainHook : IXposedHookLoadPackage {
+class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit, IXposedHookInitPackageResources {
 
     companion object {
         lateinit var httpServer: HttpServer
+        lateinit var moduleRes: Resources
+    }
+
+    private lateinit var modulePath: String
+
+    override fun initZygote(startupParam: IXposedHookZygoteInit.StartupParam) {
+        modulePath = startupParam.modulePath
+    }
+
+    override fun handleInitPackageResources(resParam: XC_InitPackageResources.InitPackageResourcesParam) {
+        moduleRes = XModuleResources.createInstance(modulePath, resParam.res)
     }
 
     override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
