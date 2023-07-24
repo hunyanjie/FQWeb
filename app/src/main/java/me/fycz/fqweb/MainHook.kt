@@ -24,6 +24,7 @@ import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.IXposedHookZygoteInit
 import de.robv.android.xposed.callbacks.XC_InitPackageResources
 import de.robv.android.xposed.callbacks.XC_LoadPackage
+import frpclib.Frpclib
 import me.fycz.fqweb.constant.Config
 import me.fycz.fqweb.utils.GlobalApp
 import me.fycz.fqweb.utils.NetworkUtils
@@ -37,7 +38,9 @@ import me.fycz.fqweb.utils.log
 import me.fycz.fqweb.utils.new
 import me.fycz.fqweb.utils.replaceMethod
 import me.fycz.fqweb.utils.setObjectField
+import me.fycz.fqweb.web.FrpcServer
 import me.fycz.fqweb.web.HttpServer
+import java.io.File
 import java.util.LinkedList
 
 
@@ -48,9 +51,12 @@ import java.util.LinkedList
 class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit, IXposedHookInitPackageResources {
 
     companion object {
-        lateinit var httpServer: HttpServer
         lateinit var moduleRes: Resources
     }
+
+    private lateinit var httpServer: HttpServer
+
+    private lateinit var frpcServer: FrpcServer
 
     private lateinit var modulePath: String
 
@@ -74,16 +80,20 @@ class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit, IXposedHookInitP
                     GlobalApp.application = app
                     log("versionCode = ${Config.versionCode}")
                     SPUtils.init(app)
-                    httpServer = HttpServer(SPUtils.getInt("port", 9999))
                     hookSetting(lpparam.classLoader)
                     hookUpdate(lpparam.classLoader)
+                    httpServer = HttpServer(SPUtils.getInt("port", 9999))
+                    frpcServer =
+                        FrpcServer("")
                     if (!httpServer.isAlive && SPUtils.getBoolean("autoStart", true)) {
                         try {
                             httpServer.start()
+                            if (!frpcServer.isAlive()) frpcServer.start()
                         } catch (e: Throwable) {
                             log(e)
                         }
                     }
+
                 }
             }
         }
@@ -326,6 +336,7 @@ class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit, IXposedHookInitP
                     }
                 } else {
                     httpServer.stop()
+                    frpcServer.stop()
                     settingView.setObjectField(Config.settingItemStrFieldName, "未开启")
                     adapter?.callMethod("notifyItemChanged", 0)
                 }
