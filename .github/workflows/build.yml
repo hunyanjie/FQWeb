@@ -31,5 +31,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: app
+          name: FQWeb
           path: ${{ github.workspace }}/app/build/outputs/apk/*/FQWeb*.apk
