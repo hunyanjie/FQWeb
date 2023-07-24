@@ -347,6 +347,7 @@ class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit, IXposedHookInitP
                         .show()
                 } else {
                     SPUtils.putInt("port", port)
+                    frpcServer.writeConfig()
                 }
                 if (s_enable.isChecked) {
                     try {

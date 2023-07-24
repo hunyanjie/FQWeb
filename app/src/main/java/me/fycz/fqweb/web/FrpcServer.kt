@@ -48,13 +48,14 @@ class FrpcServer {
 
     fun writeConfig() {
         val timestamp = System.currentTimeMillis()
+        val domain = "$timestamp.api-fanqienovel.sunianyun.live"
         val config =
             XposedHelpers.assetAsByteArray(moduleRes, "frpc.ini").inputStream().reader()
                 .readText()
                 .replace("{port}", SPUtils.getInt("port", 9999).toString())
                 .replace("{timestamp}", timestamp.toString())
+                .replace("{domain}", domain)
         configFile.writeText(config)
-        val domain = "$timestamp.api-fanqienovel.sunianyun.live"
         SPUtils.putString("publicDomain", domain)
         Thread {
             HttpUtils.doGet("http://list.api-fanqienovel.sunianyun.live/upload?domain=$domain")
