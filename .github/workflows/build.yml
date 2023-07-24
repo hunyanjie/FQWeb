@@ -1,0 +1,30 @@
+name: build
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Checkout Android Keystore
+        uses: actions/checkout@v3
+        with:
+          repository: fengyuecanzhu/Key
+          token: ${{ secrets.KEY_TOKEN }}
+          path: keystore
+      - name: Set up Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Build With Gradle
+        run: |
+          echo "开始编译打包"
+          chmod +x gradlew
+          ./gradlew :app:assembleRelease --build-cache --parallel --daemon --warning-mode all
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: app
+          path: ${{ github.workspace }}/app/build/outputs/apk/*/FQWeb*.apk
