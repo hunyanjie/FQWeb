@@ -23,10 +23,8 @@ class FrpcServer {
     }
 
     fun start() {
-        if (!configFile.exists()) {
-            writeConfig()
-        }
         if (myThread?.isAlive == true) return
+        writeConfig()
         myThread = Thread {
             try {
                 Frpclib.run(configFile.absolutePath)
