@@ -372,8 +372,6 @@ class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit, IXposedHookInitP
                 }
                 if (s_enable_2.isChecked) {
                     frpcServer.start(true)
-                } else {
-                    frpcServer.stop()
                 }
             }.create().show()
     }

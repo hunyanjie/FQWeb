@@ -23,7 +23,7 @@ class FrpcServer {
             if (manual) Toast.makeText(
                 GlobalApp.application,
                 "Frpc配置文件不存在(${configFile.absolutePath})，无法启动服务",
-                Toast.LENGTH_SHORT
+                Toast.LENGTH_LONG
             ).show()
             return
         }
@@ -44,14 +44,6 @@ class FrpcServer {
             name = "Frp Client"
         }.also {
             it.start()
-        }
-    }
-
-    fun stop() {
-        try {
-            myThread?.interrupt()
-        } catch (e: Throwable) {
-            log(e)
         }
     }
 
