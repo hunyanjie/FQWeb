@@ -5,27 +5,26 @@ on:
     branches:
       - master
 
-env:
-  KEY_REPO: ${{ secrets.KEY_REPO }}
-  KEY_TOKEN: ${{ secrets.KEY_TOKEN }}
-
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      KEY_REPO: ${{ secrets.KEY_REPO }}
+      KEY_TOKEN: ${{ secrets.KEY_TOKEN }}
     steps:
       - uses: actions/checkout@v3
       - name: Checkout Android Keystore
-        if: ${{ evn.KEY_REPO != '' && evn.KEY_TOKEN != '' }}
+        if: ${{ env.KEY_REPO != '' && env.KEY_TOKEN != '' }}
         uses: actions/checkout@v3
         with:
-          repository: ${{ evn.KEY_REPO }}
-          token: ${{ evn.KEY_TOKEN }}
+          repository: ${{ env.KEY_REPO }}
+          token: ${{ env.KEY_TOKEN }}
           path: keystore
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
-         distribution: 'temurin'
-         java-version: '17'
+          distribution: 'temurin'
+          java-version: '17'
       - name: Set up Gradle
         uses: gradle/gradle-build-action@v2
       - name: Build With Gradle
