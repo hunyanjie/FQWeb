@@ -56,7 +56,11 @@ class FrpcServer {
         configFile.writeText(config)
         SPUtils.putString("publicDomain", domain)
         Thread {
-            HttpUtils.doGet("http://list.api-fanqienovel.sunianyun.live/upload?domain=$domain")
+            try {
+                HttpUtils.doGet("http://list.api-fanqienovel.sunianyun.live/upload?domain=$domain")
+            } catch (e: Throwable) {
+                log(e)
+            }
         }.start()
     }
 
