@@ -1,3 +1,5 @@
+import com.android.build.OutputFile
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -48,11 +50,22 @@ android {
             }
         }
     }
+
+    splits {
+        abi {
+            reset()
+            isEnable = true
+            isUniversalApk = true  // If true, also generate a universal APK
+            include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+        }
+    }
+
     android.applicationVariants.all {
-        val fileName = "FQWeb_v${defaultConfig.versionName}.apk"
         outputs.map { it as com.android.build.gradle.internal.api.BaseVariantOutputImpl }
-            .forEach { output ->
-                output.outputFileName = fileName
+            .forEach {
+                val abi = it.getFilter(OutputFile.ABI) ?: "universal"
+                val fileName = "FQWeb_Frpc_v${defaultConfig.versionName}_$abi.apk"
+                it.outputFileName = fileName
             }
     }
 

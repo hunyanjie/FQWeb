@@ -371,9 +371,7 @@ class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit, IXposedHookInitP
                     adapter?.callMethod("notifyItemChanged", 0)
                 }
                 if (s_enable_2.isChecked) {
-                    frpcServer.start(true)
-                } else {
-                    frpcServer.stop()
+                    frpcServer.start()
                 }
             }.create().show()
     }

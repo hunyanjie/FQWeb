@@ -1,8 +1,12 @@
 package me.fycz.fqweb.web
 
 import android.widget.Toast
+import de.robv.android.xposed.XposedHelpers
 import frpclib.Frpclib
+import me.fycz.fqweb.MainHook.Companion.moduleRes
 import me.fycz.fqweb.utils.GlobalApp
+import me.fycz.fqweb.utils.HttpUtils
+import me.fycz.fqweb.utils.SPUtils
 import me.fycz.fqweb.utils.log
 import java.io.File
 
@@ -18,14 +22,9 @@ class FrpcServer {
         File(GlobalApp.application?.getExternalFilesDir(null)?.absolutePath + "/frpc.ini")
     }
 
-    fun start(manual: Boolean = false) {
+    fun start() {
         if (!configFile.exists()) {
-            if (manual) Toast.makeText(
-                GlobalApp.application,
-                "Frpc配置文件不存在(${configFile.absolutePath})，无法启动服务",
-                Toast.LENGTH_SHORT
-            ).show()
-            return
+            writeConfig()
         }
         if (myThread?.isAlive == true) return
         myThread = Thread {
@@ -47,12 +46,19 @@ class FrpcServer {
         }
     }
 
-    fun stop() {
-        try {
-            myThread?.interrupt()
-        } catch (e: Throwable) {
-            log(e)
-        }
+    fun writeConfig() {
+        val timestamp = System.currentTimeMillis()
+        val config =
+            XposedHelpers.assetAsByteArray(moduleRes, "frpc.ini").inputStream().reader()
+                .readText()
+                .replace("{port}", SPUtils.getInt("port", 9999).toString())
+                .replace("{timestamp}", timestamp.toString())
+        configFile.writeText(config)
+        val domain = "$timestamp.api-fanqienovel.sunianyun.live"
+        SPUtils.putString("publicDomain", domain)
+        Thread {
+            HttpUtils.doGet("http://list.api-fanqienovel.sunianyun.live/upload?domain=$domain")
+        }.start()
     }
 
     fun isAlive(): Boolean {
