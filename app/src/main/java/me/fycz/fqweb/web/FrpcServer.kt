@@ -1,5 +1,6 @@
 package me.fycz.fqweb.web
 
+import android.widget.Toast
 import frpclib.Frpclib
 import me.fycz.fqweb.utils.GlobalApp
 import me.fycz.fqweb.utils.log
@@ -10,20 +11,32 @@ import java.io.File
  * @date 2023/7/24 13:53
  * @description
  */
-class FrpcServer(private val config: String) {
+class FrpcServer {
     private var myThread: Thread? = null
 
-    private val configPath: String by lazy {
-        GlobalApp.application?.filesDir?.absolutePath + "/frpc.ini"
+    private val configFile: File by lazy {
+        File(GlobalApp.application?.getExternalFilesDir(null)?.absolutePath + "/frpc.ini")
     }
 
-    fun start() {
+    fun start(manual: Boolean = false) {
+        if (!configFile.exists()) {
+            if (manual) Toast.makeText(
+                GlobalApp.application,
+                "Frpc配置文件不存在(${configFile.absolutePath})，无法启动服务",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
         if (myThread?.isAlive == true) return
         myThread = Thread {
             try {
-                File(configPath).writeText(config)
-                Frpclib.run(configPath)
+                Frpclib.run(configFile.absolutePath)
             } catch (e: Throwable) {
+                Toast.makeText(
+                    GlobalApp.application,
+                    "Frpc服务启动失败\n${e.localizedMessage}",
+                    Toast.LENGTH_SHORT
+                ).show()
                 log(e)
             }
         }.apply {

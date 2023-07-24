@@ -84,11 +84,11 @@ class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit, IXposedHookInitP
                     hookUpdate(lpparam.classLoader)
                     httpServer = HttpServer(SPUtils.getInt("port", 9999))
                     frpcServer =
-                        FrpcServer("")
+                        FrpcServer()
                     if (!httpServer.isAlive && SPUtils.getBoolean("autoStart", true)) {
                         try {
                             httpServer.start()
-                            if (!frpcServer.isAlive()) frpcServer.start()
+                            frpcServer.start()
                         } catch (e: Throwable) {
                             log(e)
                         }
@@ -274,6 +274,37 @@ class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit, IXposedHookInitP
         linearlayout_7.addView(s_enable, layoutParams_9)
         linearlayout_0.addView(linearlayout_7, layoutParams_7)
 
+        val linearlayout_9 = LinearLayout(context)
+        val layoutParams_12 = LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        linearlayout_9.setPadding(
+            dp2px(context, 10F),
+            dp2px(context, 10F),
+            dp2px(context, 10F),
+            dp2px(context, 10F)
+        )
+        linearlayout_9.orientation = LinearLayout.HORIZONTAL
+        val textview_10 = TextView(context)
+        val layoutParams_13 = LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        textview_10.text = "开启Frpc服务："
+        textview_10.setTextColor(textColor)
+        textview_10.textSize = 16F
+        linearlayout_9.addView(textview_10, layoutParams_13)
+        val s_enable_2 = Switch(context).apply {
+            isChecked = frpcServer.isAlive()
+        }
+        val layoutParams_14 = LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        linearlayout_9.addView(s_enable_2, layoutParams_14)
+        linearlayout_0.addView(linearlayout_9, layoutParams_12)
+
         val linearlayout_8 = LinearLayout(context)
         val layoutParams_10 = LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -336,9 +367,13 @@ class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit, IXposedHookInitP
                     }
                 } else {
                     httpServer.stop()
-                    frpcServer.stop()
                     settingView.setObjectField(Config.settingItemStrFieldName, "未开启")
                     adapter?.callMethod("notifyItemChanged", 0)
+                }
+                if (s_enable_2.isChecked) {
+                    frpcServer.start(true)
+                } else {
+                    frpcServer.stop()
                 }
             }.create().show()
     }
