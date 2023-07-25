@@ -25,7 +25,7 @@ import java.lang.RuntimeException
 class FrpcServer {
     private var myThread: Thread? = null
 
-    private val retry: Int = 3
+    private val retry: Int = 1
 
     var traversalConfig: NATTraversalConfig? = null
 
@@ -115,12 +115,7 @@ class FrpcServer {
             .replace("{port}", SPUtils.getInt("port", 9999).toString())
             .replace("{timestamp}", timestamp)
             .replace("{domain}", domain)
-        configFile.writeText(
-            if (currentServer!!.name == "测试接口") config.replace(
-                "{token}",
-                "www.126126.xyz"
-            ) else config
-        )
+        configFile.writeText(config)
         SPUtils.putString("publicDomain", domain)
         Thread {
             for (i in 1..retry) {

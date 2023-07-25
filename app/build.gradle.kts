@@ -20,7 +20,7 @@ android {
         minSdk = 24
         targetSdk = 33
         versionCode = 142
-        versionName = "1.4.2-debug"
+        versionName = "1.4.2-frpc-debug"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
