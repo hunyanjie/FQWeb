@@ -29,6 +29,7 @@ import me.fycz.fqweb.constant.Config
 import me.fycz.fqweb.utils.GlobalApp
 import me.fycz.fqweb.utils.NetworkUtils
 import me.fycz.fqweb.utils.SPUtils
+import me.fycz.fqweb.utils.ToastUtils
 import me.fycz.fqweb.utils.callMethod
 import me.fycz.fqweb.utils.findClass
 import me.fycz.fqweb.utils.getObjectField
@@ -83,12 +84,12 @@ class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit, IXposedHookInitP
                     hookSetting(lpparam.classLoader)
                     hookUpdate(lpparam.classLoader)
                     httpServer = HttpServer(SPUtils.getInt("port", 9999))
-                    frpcServer =
-                        FrpcServer()
+                    frpcServer = FrpcServer()
+                    SPUtils.putString("publicDomain", "未获取")
                     if (!httpServer.isAlive && SPUtils.getBoolean("autoStart", true)) {
                         try {
                             httpServer.start()
-                            frpcServer.start()
+                            if (SPUtils.getBoolean("traversal", false)) frpcServer.start()
                         } catch (e: Throwable) {
                             log(e)
                         }
@@ -291,12 +292,57 @@ class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit, IXposedHookInitP
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
-        textview_10.text = "开启Frpc服务："
+        textview_10.text = "内网穿透服务："
         textview_10.setTextColor(textColor)
         textview_10.textSize = 16F
         linearlayout_9.addView(textview_10, layoutParams_13)
         val s_enable_2 = Switch(context).apply {
-            isChecked = frpcServer.isAlive()
+            isChecked = SPUtils.getBoolean("traversal", false)
+            setOnClickListener {
+                if (isChecked) {
+                    AlertDialog.Builder(context)
+                        .setTitle("内网穿透风险警告和免责声明")
+                        .setMessage(
+                            "内网穿透是一项技术，旨在帮助用户通过公共网络访问位于私有网络中的设备或服务。通过此服务，您可以远程访问您的设备，无论其在全球的位置如何，这在许多场景下都非常方便。然而，内网穿透涉及将您的私有网络设备暴露在公共网络之下，这意味着潜在的安全风险可能会增加。\n" +
+                                    "\n" +
+                                    "一、内网穿透风险警告：\n" +
+                                    "\n" +
+                                    "1、未经授权访问：内网穿透允许外部用户通过互联网访问内部网络或设备。如果安全措施不当或配置不当，可能会导致未经授权的人员获得对您内部系统和数据的访问权限。\n" +
+                                    "\n" +
+                                    "2、数据泄露：如果内网穿透服务存在安全漏洞或第三方服务提供商的数据处理不当，可能导致敏感数据或机密信息泄露到公共网络上。\n" +
+                                    "\n" +
+                                    "3、恶意攻击：内网穿透服务开放了内部网络的端口，这为潜在的黑客或恶意攻击者提供了潜在的入口。他们可能尝试利用这些开放的端口进行入侵、DDoS 攻击、恶意软件传播等活动。\n" +
+                                    "\n" +
+                                    "4、服务不稳定：内网穿透服务可能受到网络状况、带宽限制、服务器故障等因素的影响，导致连接不稳定或服务不可用。\n" +
+                                    "\n" +
+                                    "5、第三方服务风险：当前内网穿透服务由第三方提供，您将面临依赖于第三方供应商的问题，包括其服务的可靠性、安全性和合规性。\n" +
+                                    "\n" +
+                                    "6、端口暴露： 内网穿透开放了内部网络的端口，这也就意味着攻击者可以尝试扫描这些开放端口，寻找可能的漏洞进行攻击。\n" +
+                                    "\n" +
+                                    "7、不稳定网络： 如果用户的内部网络连接不稳定，可能会导致内网穿透服务的性能下降，或者甚至无法正常使用。\n" +
+                                    "\n" +
+                                    "8、合规和法律问题： 某些地区或组织可能对内网穿透服务有特定的法律要求或限制。用户需要确保使用内网穿透功能的合规性，以避免可能的法律问题。\n" +
+                                    "\n" +
+                                    "二、免责声明：\n" +
+                                    "\n" +
+                                    "1、对于因使用内网穿透服务导致的任何安全问题或数据泄露，开发者不承担任何责任。用户应自行评估使用内网穿透功能所带来的风险，并采取适当的措施保护其网络和设备。\n" +
+                                    "\n" +
+                                    "2、开发者无法对第三方内网穿透服务的安全性、稳定性或适用性作出任何保证。对于用户在使用该功能时遇到的任何问题，包括但不限于连接问题、数据丢失、服务不稳定等，开发者不承担任何责任。\n" +
+                                    "\n" +
+                                    "3、用户理解并同意，由于互联网本身的不稳定性和不可控性，开发者不对因网络原因造成的任何损失或损害承担责任。\n" +
+                                    "\n" +
+                                    "4、开发者保留随时修改、暂停或终止内网穿透功能的权利，而无需提前通知用户。对于因此造成的任何损失或不便，开发者不承担责任。\n" +
+                                    "\n" +
+                                    "在使用内网穿透服务前，请您务必审慎考虑并遵守上述警告和免责声明。如果您对内网穿透服务的安全性有任何疑虑，建议您不要使用该功能。"
+                        )
+                        .setCancelable(false)
+                        .setPositiveButton("我已阅读并同意") { _, _ ->
+                            isChecked = true
+                        }.setNegativeButton("不同意") { _, _ ->
+                            isChecked = false
+                        }.show()
+                }
+            }
         }
         val layoutParams_14 = LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -304,6 +350,69 @@ class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit, IXposedHookInitP
         )
         linearlayout_9.addView(s_enable_2, layoutParams_14)
         linearlayout_0.addView(linearlayout_9, layoutParams_12)
+
+        if (SPUtils.getBoolean("traversal", false)) {
+            val linearlayout_10 = LinearLayout(context)
+            val layoutParams_15 = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            linearlayout_10.setPadding(
+                dp2px(context, 10F),
+                dp2px(context, 10F),
+                dp2px(context, 10F),
+                dp2px(context, 10F)
+            )
+            linearlayout_10.orientation = LinearLayout.HORIZONTAL
+            val textview_11 = TextView(context)
+            val layoutParams_16 = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            textview_11.text =
+                "内网穿透服务(Frp)：${if (frpcServer.isAlive()) "已开启" else "未开启"}"
+            textview_11.textSize = 16F
+            linearlayout_10.addView(textview_11, layoutParams_16)
+            linearlayout_0.addView(linearlayout_10, layoutParams_15)
+
+            //公网地址
+            val linearlayout_11 = LinearLayout(context)
+            val layoutParams_17 = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            linearlayout_11.setPadding(
+                dp2px(context, 10F),
+                dp2px(context, 10F),
+                dp2px(context, 10F),
+                dp2px(context, 10F)
+            )
+            linearlayout_11.orientation = LinearLayout.HORIZONTAL
+
+            val textview_12 = TextView(context)
+            val layoutParams_18 = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            textview_12.text = "公网地址："
+            textview_12.setTextColor(textColor)
+            textview_12.textSize = 16F
+            linearlayout_11.addView(textview_12, layoutParams_18)
+            val et_domain = EditText(context).apply {
+                isSingleLine = true
+            }
+            val layoutParams_19 = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            et_domain.setText(SPUtils.getString("publicDomain", "未获取"))
+            et_domain.setTextColor(textColor)
+            et_domain.textSize = 16F
+            linearlayout_11.addView(et_domain, layoutParams_19)
+
+            linearlayout_0.addView(linearlayout_11, layoutParams_17)
+        }
+
 
         val linearlayout_8 = LinearLayout(context)
         val layoutParams_10 = LinearLayout.LayoutParams(
@@ -336,8 +445,9 @@ class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit, IXposedHookInitP
         layout_root.addView(linearlayout_0, layoutParams_0)
 
         AlertDialog.Builder(context)
-            .setTitle("Web服务")
+            .setTitle("番茄Web")
             .setView(layout_root)
+            .setCancelable(false)
             .setNegativeButton("取消", null)
             .setPositiveButton("保存设置") { dialog, _ ->
                 SPUtils.putBoolean("autoStart", s_auto_start.isChecked)
@@ -347,7 +457,6 @@ class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit, IXposedHookInitP
                         .show()
                 } else {
                     SPUtils.putInt("port", port)
-                    frpcServer.writeConfig()
                 }
                 if (s_enable.isChecked) {
                     try {
@@ -372,7 +481,11 @@ class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit, IXposedHookInitP
                     adapter?.callMethod("notifyItemChanged", 0)
                 }
                 if (s_enable_2.isChecked) {
-                    frpcServer.start()
+                    frpcServer.start(true)
+                    SPUtils.putBoolean("traversal", true)
+                } else {
+                    SPUtils.putBoolean("traversal", false)
+                    ToastUtils.toast("内网穿透服务配置将在重启应用后生效")
                 }
             }.create().show()
     }
