@@ -77,7 +77,7 @@ class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit, IXposedHookInitP
                     httpServer = HttpServer(SPUtils.getInt("port", 9999))
                     hookSetting(lpparam.classLoader)
                     hookUpdate(lpparam.classLoader)
-                    if (!httpServer.isAlive && SPUtils.getBoolean("autoStart", true)) {
+                    if (!httpServer.isAlive && SPUtils.getBoolean("autoStart", false)) {
                         try {
                             httpServer.start()
                         } catch (e: Throwable) {
@@ -225,7 +225,7 @@ class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit, IXposedHookInitP
         textview_5.textSize = 16F
         linearlayout_4.addView(textview_5, layoutParams_5)
         val s_auto_start = Switch(context).apply {
-            isChecked = SPUtils.getBoolean("autoStart", true)
+            isChecked = SPUtils.getBoolean("autoStart", false)
         }
         val layoutParams_6 = LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
