@@ -55,7 +55,6 @@ class FrpcServer {
                 name = "Frp Client"
             }.also {
                 it.start()
-                if (manual) ToastUtils.toast("内网穿透服务已启动")
             }
         }
     }
