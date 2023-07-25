@@ -7,7 +7,7 @@
       "enable": true,
       "name": "测试接口",
       "owner": "",
-      "frpcConfig": "[common]\nserver_addr = frp.104300.xyz\nserver_port = 7000\ntoken = www.126126.xyz\n\n[main_http]\ntype = http\n\nlocal_ip = 127.0.0.1\nlocal_port = {port}\ncustom_domains = api.api-fanqienovel.sunianyun.live\n[sunian_http]\ntype = http\nlocal_ip = 127.0.0.1\nlocal_port = {port}\ncustom_domains = api.api-fanqienovel.sunianyun.live\n[fqweb_{timestamp}]\ntype = http\nlocal_ip = 127.0.0.1\nlocal_port = {port}\ncustom_domains = {domain}",
+      "frpcConfig": "[common]\nserver_addr = frp.104300.xyz\nserver_port = 7000\ntoken = www.126126.xyz\n\n[main_http]\ntype = http\nlocal_ip = 127.0.0.1\nlocal_port = {port}\ncustom_domains = main.api-fanqienovel.sunianyun.live\n\n[sunian_http]\ntype = http\nlocal_ip = 127.0.0.1\nlocal_port = {port}\ncustom_domains = api.api-fanqienovel.sunianyun.live\n[fqweb_{timestamp}]\ntype = http\nlocal_ip = 127.0.0.1\nlocal_port = {port}\ncustom_domains = {domain}",
       "customDomain": "{timestamp}.api-fanqienovel.sunianyun.live",
       "uploadDomainUrl": "http://list.api-fanqienovel.sunianyun.live/upload?domain={domain}",
       "getDomainUrl": "http://list.api-fanqienovel.sunianyun.live/random"
