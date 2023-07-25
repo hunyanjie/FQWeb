@@ -153,7 +153,22 @@ class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit, IXposedHookInitP
             ) {
                 val context = (it.args[0] as View).context
                 if (it.args[1].getObjectField("e") == "Web服务") {
-                    dialog(context, adapter, it.args[1])
+                    if (!SPUtils.getBoolean("disclaimer", false)) {
+                        AlertDialog.Builder(context)
+                            .setTitle("免责声明")
+                            .setCancelable(true)
+                            .setMessage(
+                                XposedHelpers.assetAsByteArray(moduleRes, "disclaimer.txt")
+                                    .inputStream().reader().readText()
+                            )
+                            .setPositiveButton("同意并继续") { _, _ ->
+                                dialog(context, adapter, it.args[1])
+                                SPUtils.putBoolean("disclaimer", true)
+                            }.setNegativeButton("不同意", null)
+                            .show()
+                    } else {
+                        dialog(context, adapter, it.args[1])
+                    }
                 } else {
                     it.invokeOriginalMethod()
                 }
@@ -449,7 +464,8 @@ class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit, IXposedHookInitP
                         adapter?.callMethod("notifyItemChanged", 0)
                     } catch (e: Throwable) {
                         log(e)
-                        Toast.makeText(context, e.localizedMessage ?: "", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, e.localizedMessage ?: "", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 } else {
                     httpServer.stop()
