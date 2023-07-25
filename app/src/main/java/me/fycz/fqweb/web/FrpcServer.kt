@@ -4,8 +4,10 @@ import android.widget.Toast
 import de.robv.android.xposed.XposedHelpers
 import frpclib.Frpclib
 import me.fycz.fqweb.MainHook.Companion.moduleRes
+import me.fycz.fqweb.entity.NATTraversalConfig
 import me.fycz.fqweb.utils.GlobalApp
 import me.fycz.fqweb.utils.HttpUtils
+import me.fycz.fqweb.utils.JsonUtils
 import me.fycz.fqweb.utils.SPUtils
 import me.fycz.fqweb.utils.log
 import java.io.File
@@ -18,29 +20,46 @@ import java.io.File
 class FrpcServer {
     private var myThread: Thread? = null
 
+    private var traversalConfig: NATTraversalConfig? = null
+
     private val configFile: File by lazy {
         File(GlobalApp.application?.getExternalFilesDir(null)?.absolutePath + "/frpc.ini")
     }
 
     fun start() {
         if (myThread?.isAlive == true) return
-        writeConfig()
-        myThread = Thread {
-            try {
-                Frpclib.run(configFile.absolutePath)
-            } catch (e: Throwable) {
-                Toast.makeText(
-                    GlobalApp.application,
-                    "Frpc服务启动失败\n${e.localizedMessage}",
-                    Toast.LENGTH_SHORT
-                ).show()
-                log(e)
+        initConfig() {
+            myThread = Thread {
+                try {
+                    Frpclib.run(configFile.absolutePath)
+                } catch (e: Throwable) {
+                    Toast.makeText(
+                        GlobalApp.application,
+                        "Frpc服务启动失败\n${e.localizedMessage}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    log(e)
+                }
+            }.apply {
+                isDaemon = true
+                name = "Frp Client"
+            }.also {
+                it.start()
             }
-        }.apply {
-            isDaemon = true
-            name = "Frp Client"
-        }.also {
-            it.start()
+        }
+    }
+
+    private fun initConfig(callback: () -> Unit) {
+        Thread {
+            var throwable: Throwable? = null
+            for (i in 1..3) {
+                try {
+                    //traversalConfig = JsonUtils.fromJson()
+                    break
+                } catch (e: Throwable) {
+
+                }
+            }
         }
     }
 

@@ -15,11 +15,16 @@ object JsonUtils {
         jsonUtils.getStaticObjectField("gson")!!
     }
 
-    fun toJson(obj: Any): String{
+    fun toJson(obj: Any): String {
         return jsonUtils.callStaticMethod("toJson", obj) as String
     }
 
-    fun toJson(src: Any, writer: Any){
+    fun <T> fromJson(json: String, clazz: Class<T>): T {
+        return gson.callMethod("fromJson", json, clazz) as T
+    }
+
+
+    fun toJson(src: Any, writer: Any) {
         gson.callMethod("toJson", src, writer)
     }
 }
