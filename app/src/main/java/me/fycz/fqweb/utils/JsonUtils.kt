@@ -23,7 +23,6 @@ object JsonUtils {
         return gson.callMethod("fromJson", json, clazz) as T
     }
 
-
     fun toJson(src: Any, writer: Any) {
         gson.callMethod("toJson", src, writer)
     }
