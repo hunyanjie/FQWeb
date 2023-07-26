@@ -1,3 +1,5 @@
+import com.android.build.OutputFile
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -17,8 +19,8 @@ android {
         applicationId = "me.fycz.fqweb"
         minSdk = 24
         targetSdk = 33
-        versionCode = 141
-        versionName = "1.4.1"
+        versionCode = 142
+        versionName = "1.4.2-frpc-debug"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -48,11 +50,22 @@ android {
             }
         }
     }
+
+    splits {
+        abi {
+            reset()
+            isEnable = true
+            isUniversalApk = true  // If true, also generate a universal APK
+            include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+        }
+    }
+
     android.applicationVariants.all {
-        val fileName = "FQWeb_v${defaultConfig.versionName}.apk"
         outputs.map { it as com.android.build.gradle.internal.api.BaseVariantOutputImpl }
-            .forEach { output ->
-                output.outputFileName = fileName
+            .forEach {
+                val abi = it.getFilter(OutputFile.ABI) ?: "universal"
+                val fileName = "FQWeb_Frpc_v${defaultConfig.versionName}_$abi.apk"
+                it.outputFileName = fileName
             }
     }
 
@@ -70,6 +83,9 @@ dependencies {
 
     //webServer
     implementation("org.nanohttpd:nanohttpd:2.3.1")
+
+    //frpc
+    implementation(files("libs/frpclib.aar"))
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

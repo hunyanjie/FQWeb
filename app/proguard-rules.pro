@@ -72,3 +72,5 @@
 # 保留
 -keep class me.fycz.fqweb.MainHook
 -keepclassmembers class me.fycz.fqweb.web.ReturnData {<fields>;}
+-keepclassmembers class me.fycz.fqweb.entity.NATTraversalConfig {<fields>;<init>();}
+-keepclassmembers class me.fycz.fqweb.entity.ServerConfig {<fields>;<init>();}
